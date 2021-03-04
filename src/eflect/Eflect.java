@@ -1,53 +1,123 @@
-package eflect;
+package eflect.experiments;
 
-import static eflect.util.ProcUtil.readProcStat;
-import static eflect.util.ProcUtil.readTaskStats;
+import static eflect.util.LoggerUtil.getLogger;
+import static eflect.util.WriterUtil.writeCsv;
+import static java.util.concurrent.Executors.newScheduledThreadPool;
 
-import eflect.data.AccountantMerger;
-import eflect.data.EnergyAccountant;
+import eflect.LinuxEflect;
 import eflect.data.EnergyFootprint;
-import eflect.data.EnergySample;
-import eflect.data.Sample;
-import eflect.data.SampleCollector;
-import eflect.data.jiffies.JiffiesAccountant;
-import eflect.data.jiffies.ProcStatSample;
-import eflect.data.jiffies.ProcTaskSample;
-import eflect.util.Rapl;
+import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.function.Supplier;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
-/** A clerk that uses the eflect algorithm as a {@link Processor}. */
-public final class Eflect extends SampleCollector<Collection<EnergyFootprint>> {
-  // system constants
-  private static final int SOCKET_COUNT = Rapl.getInstance().getSocketCount();
-  private static final int COMPONENT_COUNT = 3; // hard-coded value from rapl
-  private static final double WRAP_AROUND_ENERGY = Rapl.getInstance().getWrapAroundEnergy();
+/** A wrapper around {@link LinuxEflect} that also monitors runtime stats and calmness. */
+public final class Eflect {
+  private static final Logger logger = getLogger();
+  private static final AtomicInteger counter = new AtomicInteger();
+  private static final ThreadFactory threadFactory =
+      r -> {
+        Thread t = new Thread(r, "eflect-" + counter.getAndIncrement());
+        t.setDaemon(true);
+        return t;
+      };
   private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
+  private static final String FOOTPRINT_HEADER =
+      "id,name,start,end,domain,app_energy,total_energy,trace";
 
-  private static Collection<Supplier<Sample>> getSources() {
-    Supplier<Sample> stat = () -> new ProcStatSample(Instant.now(), readProcStat());
-    Supplier<Sample> task = () -> new ProcTaskSample(Instant.now(), readTaskStats());
-    Supplier<Sample> rapl =
-        () -> new EnergySample(Instant.now(), Rapl.getInstance().getEnergyStats());
-    return List.of(stat, task, rapl);
+  private static Eflect instance;
+
+  /** Creates an instance of the underlying class if it hasn't been created yet. */
+  public static synchronized Eflect getInstance() {
+    if (instance == null) {
+      instance = new Eflect();
+    }
+    return instance;
   }
 
-  public Eflect(int mergeAttempts, ScheduledExecutorService executor, Duration period) {
-    super(
-        getSources(),
-        new AccountantMerger<EnergyFootprint>(
-            () ->
-                new EnergyAccountant(
-                    SOCKET_COUNT,
-                    COMPONENT_COUNT,
-                    WRAP_AROUND_ENERGY,
-                    new JiffiesAccountant(SOCKET_COUNT, cpu -> cpu / (CPU_COUNT / SOCKET_COUNT))),
-            mergeAttempts),
-        executor,
-        period);
+  private final String outputPath;
+  private final long periodMillis;
+  private final Instant[] time = new Instant[2];
+  private final double[][][] energy = new double[2][][];
+
+  private ScheduledExecutorService executor;
+  private EflectCollector eflect;
+  private Collection<EnergyFootprint> footprints;
+
+  // TODO(timur): i'm not sure how much this class wrapper needs to do
+  private Eflect() {
+    this.outputPath = System.getProperty("eflect.output", ".");
+    this.periodMillis = Long.parseLong(System.getProperty("eflect.period", "64"));
+  }
+
+  /**
+   * Creates and starts instances of eflect and the calmness monitor.
+   *
+   * <p>If there is no existing executor, a new thread pool is spun-up.
+   *
+   * <p>If the period is 0, an eflect will not be created.
+   */
+  public void start() {
+    start(periodMillis);
+  }
+
+  /** Starts up eflect if needed. */
+  public void start(long periodMillis) {
+    logger.info("starting eflect");
+    if (executor == null) {
+      executor = newScheduledThreadPool(5, threadFactory);
+    }
+    Duration period = Duration.ofMillis(periodMillis);
+    eflect = new LinuxEflect(executor, period);
+    eflect.start();
+  }
+
+  /** Stops any running collectors. */
+  public void stop() {
+    eflect.stop();
+    logger.info("stopped eflect");
+  }
+
+  /** Writes the footprints as a csv. */
+  public void dump() {
+    File dataDirectory = getOutputDirectory();
+    if (footprints != null) {
+      writeCsv(dataDirectory.getPath(), "footprint.csv", FOOTPRINT_HEADER, eflect.read());
+    }
+    writeFreqs("calmness.csv");
+  }
+
+  public void dump(String tag) {
+    File dataDirectory = getOutputDirectory();
+    if (footprints != null) {
+      writeCsv(
+          dataDirectory.getPath(), "footprint-" + tag + ".csv", FOOTPRINT_HEADER, eflect.read());
+    }
+    writeFreqs("calmness-" + tag + "-.csv");
+  }
+
+  /** Shutdown the executor. */
+  public void shutdown() {
+    executor.shutdown();
+    executor = null;
+  }
+
+  private File getOutputDirectory() {
+    File outputDir = new File(outputPath);
+    if (!outputDir.exists()) {
+      outputDir.mkdirs();
+    }
+    return outputDir;
+  }
+
+  public static void main(String[] args) throws Exception {
+    getInstance().start();
+    Thread.sleep(1000);
+    getInstance().stop();
+    getInstance().dump();
   }
 }
