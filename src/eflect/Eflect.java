@@ -1,10 +1,9 @@
-package eflect.experiments;
+package eflect;
 
 import static eflect.util.LoggerUtil.getLogger;
 import static eflect.util.WriterUtil.writeCsv;
 import static java.util.concurrent.Executors.newScheduledThreadPool;
 
-import eflect.LinuxEflect;
 import eflect.data.EnergyFootprint;
 import java.io.File;
 import java.time.Duration;
@@ -15,7 +14,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
-/** A wrapper around {@link LinuxEflect} that also monitors runtime stats and calmness. */
+/** A wrapper around {@link EflectCollector} that also monitors runtime stats and calmness. */
 public final class Eflect {
   private static final Logger logger = getLogger();
   private static final AtomicInteger counter = new AtomicInteger();
@@ -39,6 +38,7 @@ public final class Eflect {
     return instance;
   }
 
+  private final int mergeAttempts;
   private final String outputPath;
   private final long periodMillis;
   private final Instant[] time = new Instant[2];
@@ -48,8 +48,8 @@ public final class Eflect {
   private EflectCollector eflect;
   private Collection<EnergyFootprint> footprints;
 
-  // TODO(timur): i'm not sure how much this class wrapper needs to do
   private Eflect() {
+    this.mergeAttempts = Integer.parseInt(System.getProperty("eflect.attempts", "100"));
     this.outputPath = System.getProperty("eflect.output", ".");
     this.periodMillis = Long.parseLong(System.getProperty("eflect.period", "64"));
   }
@@ -72,7 +72,7 @@ public final class Eflect {
       executor = newScheduledThreadPool(5, threadFactory);
     }
     Duration period = Duration.ofMillis(periodMillis);
-    eflect = new LinuxEflect(executor, period);
+    eflect = new EflectCollector(mergeAttempts, executor, period);
     eflect.start();
   }
 
@@ -85,19 +85,12 @@ public final class Eflect {
   /** Writes the footprints as a csv. */
   public void dump() {
     File dataDirectory = getOutputDirectory();
-    if (footprints != null) {
-      writeCsv(dataDirectory.getPath(), "footprint.csv", FOOTPRINT_HEADER, eflect.read());
-    }
-    writeFreqs("calmness.csv");
+    writeCsv(dataDirectory.getPath(), "footprint.csv", FOOTPRINT_HEADER, eflect.read());
   }
 
   public void dump(String tag) {
     File dataDirectory = getOutputDirectory();
-    if (footprints != null) {
-      writeCsv(
-          dataDirectory.getPath(), "footprint-" + tag + ".csv", FOOTPRINT_HEADER, eflect.read());
-    }
-    writeFreqs("calmness-" + tag + "-.csv");
+    writeCsv(dataDirectory.getPath(), "footprint-" + tag + ".csv", FOOTPRINT_HEADER, eflect.read());
   }
 
   /** Shutdown the executor. */
