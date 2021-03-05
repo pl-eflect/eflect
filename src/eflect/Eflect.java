@@ -106,11 +106,4 @@ public final class Eflect {
     }
     return outputDir;
   }
-
-  public static void main(String[] args) throws Exception {
-    getInstance().start();
-    Thread.sleep(1000);
-    getInstance().stop();
-    getInstance().dump();
-  }
 }
