@@ -22,7 +22,7 @@ TENSORFLOW_JNI_TAR=$TARGET_DIR/$TENSORFLOW_JNI_TAR_NAME
 if [ ! -f $TENSORFLOW_JAR ]; then
   wget -O $TENSORFLOW_JAR $TENSORFLOW_JAR_URL
   wget -O $TENSORFLOW_JNI_TAR $TENSORFLOW_JNI_URL
-  cd $TARGET_DIR && tar -xvf $TENSORFLOW_JNI_TAR_NAME
+  cd $TARGET_DIR && tar -xvf $TENSORFLOW_JNI_TAR_NAME && cd ..
   rm $TENSORFLOW_JNI_TAR
 fi
 
@@ -38,6 +38,8 @@ IMAGE=$RESOURCES/test_image.jpeg
 if [ ! -f $IMAGE ]; then
   wget -O $RESOURCES/$GRAPH_TAR $GRAPH_TAR_URL
   wget -O $IMAGE $IMAGE_URL
-  cd $RESOURCES && tar -xvf $GRAPH_TAR
+  cd $RESOURCES && tar -xvf $GRAPH_TAR && cd ..
   rm $GRAPH_TAR
 fi
+
+make
