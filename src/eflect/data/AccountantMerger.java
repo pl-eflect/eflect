@@ -7,7 +7,7 @@ import java.util.TreeMap;
 import java.util.function.Supplier;
 
 /** Processor that merges accountants into groups of accounted data. */
-public final class AccountantMerger<O> implements Processor<Collection<O>> {
+public final class AccountantMerger<O> implements SampleProcessor<Collection<O>> {
   private final TreeMap<Instant, Accountant<Collection<O>>> data = new TreeMap<>();
   private final Supplier<Accountant<Collection<O>>> accountantFactory;
   private final int mergeAttempts;

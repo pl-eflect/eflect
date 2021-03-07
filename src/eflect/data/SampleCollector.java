@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 public class SampleCollector<O> {
   private final ArrayList<Future<?>> futures = new ArrayList<>();
   private final Iterable<Supplier<Sample>> sources;
-  private final Processor<O> processor;
+  private final SampleProcessor<O> processor;
   private final ScheduledExecutorService executor;
   private final Duration period;
 
@@ -22,7 +22,7 @@ public class SampleCollector<O> {
 
   public SampleCollector(
       Collection<Supplier<Sample>> sources,
-      Processor<O> processor,
+      SampleProcessor<O> processor,
       ScheduledExecutorService executor,
       Duration period) {
     this.sources = sources;

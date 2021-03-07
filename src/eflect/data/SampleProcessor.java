@@ -1,7 +1,7 @@
 package eflect.data;
 
 /** Interface that consumes and produces data. */
-public interface Processor<O> {
+public interface SampleProcessor<O> {
   /** Adds data to the processor. */
   void add(Sample s);
 
