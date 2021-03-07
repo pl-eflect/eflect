@@ -11,14 +11,12 @@ IMAGE=$PWD/"resources/test_image.jpeg"
 
 TENSORFLOW_SO=$PWD/$DEPS_DIR/libtensorflow_jni.so
 
-java -Dtf.lib=$TENSORFLOW_SO -Deflect.output=$OUTPUT_DIR/$i -cp $EFLECT_JAR:$TENSORFLOW_JAR eflect.experiments.InceptionDriver $MODEL $IMAGE &
+pids=""
+for i in `seq 1 1 $2`; do
+  java -Dtf.lib=$TENSORFLOW_SO -Deflect.output=$OUTPUT_DIR/$i -cp $EFLECT_JAR:$TENSORFLOW_JAR eflect.experiments.InceptionDriver $MODEL $IMAGE &
+  pids+=$!" "
+done
 
-# pids=""
-# for i in `seq 1 1 $2`; do
-#   java -Dtf.lib=${DEPS_DIR} -Deflect.output=$OUTPUT_DIR/$i -cp $EFLECT_JAR:$TENSORFLOW_JAR eflect.experiments.InceptionDriver $MODEL $IMAGE &
-#   pids+=$!" "
-# done
-#
-# for pid in $pids; do
-#   tail --pid=$pid -f /dev/null
-# done
+for pid in $pids; do
+  tail --pid=$pid -f /dev/null
+done

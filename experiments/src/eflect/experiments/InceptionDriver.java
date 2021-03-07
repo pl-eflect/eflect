@@ -47,9 +47,9 @@ public class InceptionDriver {
               s.runner().feed("input", data).fetch("InceptionV3/Predictions/Reshape/shape").run();
         }
         if ((i + 1) % (batches) == 0) {
-          getLogger().info("completed iteration " + Integer.toString(batches / i));
+          getLogger().info("completed iteration " + Integer.toString(i / batches + 1));
           Eflect.getInstance().stop();
-          Eflect.getInstance().dump(Integer.toString(batches / i));
+          Eflect.getInstance().dump(Integer.toString(i / batches));
           Eflect.getInstance().start();
         }
       }
