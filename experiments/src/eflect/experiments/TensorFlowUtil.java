@@ -1,4 +1,4 @@
-package eflect.experiments.util;
+package eflect.experiments;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,7 +10,7 @@ import org.tensorflow.Output;
 import org.tensorflow.Session;
 import org.tensorflow.Tensor;
 
-public class TensorFlowUtil {
+class TensorFlowUtil {
   public static byte[] readBytes(Path path) {
     try {
       return Files.readAllBytes(path);

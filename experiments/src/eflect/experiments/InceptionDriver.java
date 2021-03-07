@@ -1,13 +1,15 @@
 package eflect.experiments;
 
-import static eflect.experiments.util.TensorFlowUtil.normalizeImage;
-import static eflect.experiments.util.TensorFlowUtil.readBytes;
 import static eflect.util.LoggerUtil.getLogger;
 
 import eflect.Eflect;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import org.tensorflow.Graph;
+import org.tensorflow.Output;
 import org.tensorflow.Session;
 import org.tensorflow.Tensor;
 
@@ -28,8 +30,8 @@ public class InceptionDriver {
     checkArgs(args);
     // hack to load the stripped .so
     System.load(System.getProperty("tf.lib"));
-    try (Tensor<?> data = normalizeImage(readBytes(Paths.get(args[1]))); ) {
-      executeGraph(readBytes(Paths.get(args[0])), data);
+    try (Tensor<?> data = normalizeImage(readBytesOrDie(Paths.get(args[1]))); ) {
+      executeGraph(readBytesOrDie(Paths.get(args[0])), data);
     }
   }
 
@@ -52,6 +54,41 @@ public class InceptionDriver {
         }
       }
       Eflect.getInstance().stop();
+    }
+  }
+
+  public static byte[] readBytesOrDie(Path path) {
+    try {
+      return Files.readAllBytes(path);
+    } catch (IOException e) {
+      System.err.println("Failed to read [" + path + "]: " + e.getMessage());
+      System.exit(1);
+    }
+    return null;
+  }
+
+  public static Tensor<Float> normalizeImage(byte[] imageBytes) {
+    try (Graph g = new Graph()) {
+      GraphBuilder b = new GraphBuilder(g);
+      // Some constants specific to the pre-trained model
+      final int H = 224;
+      final int W = 224;
+      final float mean = 117f;
+      final float scale = 1f;
+
+      final Output<String> input = b.constant("input", imageBytes);
+      final Output<Float> output =
+          b.div(
+              b.sub(
+                  b.resizeBilinear(
+                      b.expandDims(
+                          b.cast(b.decodeJpeg(input, 3), Float.class), b.constant("make_batch", 0)),
+                      b.constant("size", new int[] {H, W})),
+                  b.constant("mean", mean)),
+              b.constant("scale", scale));
+      try (Session s = new Session(g)) {
+        return s.runner().fetch(output.op().name()).run().get(0).expect(Float.class);
+      }
     }
   }
 

@@ -1,4 +1,4 @@
-package eflect.experiments.util;
+package eflect.experiments;
 
 import org.tensorflow.DataType;
 import org.tensorflow.Graph;

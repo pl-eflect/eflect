@@ -1,2 +1,18 @@
+# Java
 *.class
 *.jar
+*.so
+
+# python
+__pycache__
+
+# build related files
+*.tar
+*.tar.gz
+*.zip
+
+# data
+eflect-logs
+*.csv
+*.log
+*.pdf
