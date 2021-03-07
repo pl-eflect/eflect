@@ -42,4 +42,6 @@ if [ ! -f $IMAGE ]; then
   rm $GRAPH_TAR
 fi
 
+make -C third_party/async-profiler
+
 make

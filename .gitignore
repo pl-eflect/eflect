@@ -10,9 +10,12 @@ __pycache__
 *.tar
 *.tar.gz
 *.zip
+*.jpeg
+*.pb
 
 # data
 eflect-logs
 *.csv
 *.log
 *.pdf
+*.txt

@@ -1,6 +1,6 @@
-SOURCES = $(wildcard src/eflect/experiments/*.java) $(wildcard src/eflect/experiments/util/*.java)
+SOURCES = $(wildcard src/eflect/*.java) $(wildcard src/eflect/data/*.java) $(wildcard src/eflect/data/async/*.java) $(wildcard src/eflect/experiments/*.java) $(wildcard src/eflect/util/*.java)
 EFLECT_JAR =  ../eflect.jar
-EXTERNAL_DEPS = ./third_party/dacapo.jar:./third_party/libtensorflow.jar
+EXTERNAL_DEPS = ./third_party/dacapo.jar:./third_party/libtensorflow.jar:./third_party/async-profiler/build/async-profiler.jar
 BUILD_DIR = temp-build
 CLASS_DIR = eflect
 TARGET = eflect-experiments.jar
