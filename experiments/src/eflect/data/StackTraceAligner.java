@@ -43,7 +43,6 @@ public final class StackTraceAligner implements SampleProcessor<Collection<Energ
         if (footprintGroups.contains(timestamp)) {
           for (StackTraceSample sample : samples.get(timestamp)) {
             if (footprintGroups.get(timestamp).containsKey(sample.getId())) {
-              // TODO(timur): do we want to include the timestamp for the traces?
               footprintGroups
                   .get(timestamp)
                   .get(sample.getId())
