@@ -8,6 +8,7 @@ import eflect.data.EnergyFootprint;
 import java.io.File;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -71,6 +72,7 @@ public final class Eflect {
     if (executor == null) {
       executor = newScheduledThreadPool(5, threadFactory);
     }
+    footprints = new ArrayList<>();
     Duration period = Duration.ofMillis(periodMillis);
     eflect = new EflectCollector(mergeAttempts, executor, period);
     eflect.start();
@@ -80,17 +82,23 @@ public final class Eflect {
   public void stop() {
     eflect.stop();
     logger.info("stopped eflect");
+    footprints = eflect.read();
+  }
+
+  public Collection<EnergyFootprint> read() {
+    footprints = eflect.read();
+    return footprints;
   }
 
   /** Writes the footprints as a csv. */
   public void dump() {
     File dataDirectory = getOutputDirectory();
-    writeCsv(dataDirectory.getPath(), "footprint.csv", FOOTPRINT_HEADER, eflect.read());
+    writeCsv(dataDirectory.getPath(), "footprint.csv", FOOTPRINT_HEADER, footprints);
   }
 
   public void dump(String tag) {
     File dataDirectory = getOutputDirectory();
-    writeCsv(dataDirectory.getPath(), "footprint-" + tag + ".csv", FOOTPRINT_HEADER, eflect.read());
+    writeCsv(dataDirectory.getPath(), "footprint-" + tag + ".csv", FOOTPRINT_HEADER, footprints);
   }
 
   /** Shutdown the executor. */

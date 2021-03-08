@@ -26,7 +26,7 @@ public final class AsyncProfilerSample implements SampleCollection {
   /** Parse and return the jiffies from the stat strings. */
   @Override
   public Collection<Sample> getSamples() {
-    ArrayList<Sample> samples = new ArrayList();
+    ArrayList<Sample> samples = new ArrayList<>();
     for (String record : records.split("\n")) {
       String[] entries = record.split(",");
       Instant timestamp = Instant.ofEpochMilli(Long.parseLong(entries[0]));

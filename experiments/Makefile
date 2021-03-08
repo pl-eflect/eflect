@@ -1,14 +1,14 @@
-SOURCES = $(wildcard src/eflect/*.java) $(wildcard src/eflect/data/*.java) $(wildcard src/eflect/data/async/*.java) $(wildcard src/eflect/experiments/*.java) $(wildcard src/eflect/util/*.java)
+SOURCES = $(wildcard src/eflect/*.java) $(wildcard src/eflect/**/*.java) $(wildcard src/eflect/**/**/*.java)
 EFLECT_JAR =  ../eflect.jar
-EXTERNAL_DEPS = ./third_party/dacapo.jar:./third_party/libtensorflow.jar:./third_party/async-profiler/build/async-profiler.jar
-BUILD_DIR = temp-build
-CLASS_DIR = eflect
+EXTERNAL_JARS = $(subst $(DUMMY) $(DUMMY),:,$(wildcard resources/jar/*.jar))
+DEPS = $(EFLECT_JAR):$(EXTERNAL_JARS)
 TARGET = eflect-experiments.jar
 
-jar:
-	mkdir -p $(BUILD_DIR)/$(CLASS_DIR)
-	javac $(SOURCES) -d $(BUILD_DIR) -cp $(EFLECT_JAR):$(EXTERNAL_DEPS)
-	cd $(BUILD_DIR) && jar -cf $(TARGET) $(CLASS_DIR)
+BUILD_DIR = build
+eflect:
+	mkdir -p $(BUILD_DIR)
+	javac $(SOURCES) -d $(BUILD_DIR) -cp $(DEPS)
+	cd $(BUILD_DIR) && jar -cf $(TARGET) *
 	mv $(BUILD_DIR)/$(TARGET) $(TARGET)
 	rm -r $(BUILD_DIR)
 

@@ -1,47 +1,91 @@
 # !/bin/bash
 
-EFLECT_JAR="../eflect.jar"
+# helper functions
+function fetch_file {
+  url=$1
+  file=$2
+  if [ ! -f $file ]; then
+    wget -O $file $url
+  fi
+}
+
+function fetch_tar {
+  url=$1
+  tar=$2
+  dir=$3
+  if [ ! -f $tar ]; then
+    wget -O $tar $url
+    tar -xvf $tar -C $dir
+  fi
+}
+
+function fetch_zip {
+  url=$1
+  zip=$2
+  dir=$3
+  if [ ! -f $zip ]; then
+    wget -O $zip $url
+    unzip $zip -d $dir
+  fi
+}
+
+# build eflect
+EFLECT_JAR=../eflect.jar
 if [ ! -f $EFLECT_JAR ]; then
   make -C ..
 fi
 
-TARGET_DIR="third_party"
-mkdir -p $TARGET_DIR
+# build resource dirs
+RESOURCE_DIR=resources
+mkdir -p $RESOURCE_DIR
 
-DACAPO_JAR_URL="https://sourceforge.net/projects/dacapobench/files/evaluation/dacapo-evaluation-git%2B309e1fa.jar/download"
-DACAPO_JAR=$TARGET_DIR/"dacapo.jar"
-if [ ! -f $DACAPO_JAR ]; then
-  wget -O $DACAPO_JAR $DACAPO_JAR_URL
-fi
+BIN_DIR=$RESOURCE_DIR/bin
+mkdir -p $BIN_DIR
 
-TENSORFLOW_JAR_URL="https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-1.14.0.jar"
-TENSORFLOW_JNI_URL="https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow_jni-cpu-linux-x86_64-2.4.0.tar.gz"
-TENSORFLOW_JAR=$TARGET_DIR/"libtensorflow.jar"
-TENSORFLOW_JNI_TAR_NAME="libtensorflow_jni-cpu-linux-x86_64-2.4.0.tar.gz"
-TENSORFLOW_JNI_TAR=$TARGET_DIR/$TENSORFLOW_JNI_TAR_NAME
-if [ ! -f $TENSORFLOW_JAR ]; then
-  wget -O $TENSORFLOW_JAR $TENSORFLOW_JAR_URL
-  wget -O $TENSORFLOW_JNI_TAR $TENSORFLOW_JNI_URL
-  cd $TARGET_DIR && tar -xvf $TENSORFLOW_JNI_TAR_NAME && cd ..
-  rm $TENSORFLOW_JNI_TAR
-fi
+DATA_DIR=$RESOURCE_DIR/data
+mkdir -p $DATA_DIR
 
-RESOURCES=resources
-mkdir -p $RESOURCES
+JAR_DIR=$RESOURCE_DIR/jar
+mkdir -p $JAR_DIR
+
+# grab from web
+DACAPO_JAR_URL=https://sourceforge.net/projects/dacapobench/files/evaluation/dacapo-evaluation-git%2B309e1fa.jar/download
+DACAPO_JAR=dacapo.jar
+fetch_file $DACAPO_JAR_URL $JAR_DIR/$DACAPO_JAR
+
+TENSORFLOW_JAR_URL=https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-1.14.0.jar
+TENSORFLOW_JAR=libtensorflow.jar
+fetch_file $TENSORFLOW_JAR_URL $JAR_DIR/$TENSORFLOW_JAR
+
+SUNFLOW_URL=https://clerk-deps.s3.amazonaws.com/sunflow.zip
+SUNFLOW_ZIP=sunflow.zip
+fetch_zip $SUNFLOW_URL $JAR_DIR/$SUNFLOW_ZIP $JAR_DIR
+
+TENSORFLOW_JNI_URL=https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow_jni-cpu-linux-x86_64-2.4.0.tar.gz
+TENSORFLOW_JNI_TAR=libtensorflow_jni-cpu-linux-x86_64-2.4.0.tar.gz
+fetch_tar $TENSORFLOW_JNI_URL $BIN_DIR/$TENSORFLOW_JNI_TAR $BIN_DIR
+
+IMAGE_URL=https://farm1.static.flickr.com/134/391533489_8a3b17aa93.jpg
+IMAGE=test_image.jpeg
+fetch_file $IMAGE_URL $DATA_DIR/$IMAGE
 
 GRAPH_TAR_URL=https://storage.googleapis.com/download.tensorflow.org/models/inception_v3_2016_08_28_frozen.pb.tar.gz
 GRAPH_TAR=inception_v3_2016_08_28_frozen.pb.tar.gz
+fetch_tar $GRAPH_TAR_URL $DATA_DIR/$GRAPH_TAR $DATA_DIR
 
-IMAGE_URL=https://farm1.static.flickr.com/134/391533489_8a3b17aa93.jpg
-IMAGE=$RESOURCES/test_image.jpeg
-
-if [ ! -f $IMAGE ]; then
-  wget -O $RESOURCES/$GRAPH_TAR $GRAPH_TAR_URL
-  wget -O $IMAGE $IMAGE_URL
-  cd $RESOURCES && tar -xvf $GRAPH_TAR && cd ..
-  rm $GRAPH_TAR
+# build local deps
+if [ ! -f $JAR_DIR/async-profiler.jar ]; then
+  make -C third_party/async-profiler
+  cp third_party/async-profiler/build/async-profiler.jar resources/jar/.
+  cp third_party/async-profiler/build/libasyncProfiler.so resources/bin/.
 fi
 
-make -C third_party/async-profiler
+if [ ! -f $JAR_DIR/stokelib.jar ]; then
+  make -C third_party/aeneas
+  cp third_party/aeneas/stokelib.jar resources/jar/.
+fi
 
-make
+# build experiments
+if [ ! -f eflect-experiments.jar ]; then
+  make
+fi
