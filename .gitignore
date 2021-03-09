@@ -1,14 +1,13 @@
-# Java
+# compiled files
 *.o
 *.class
 *.jar
 *.so
 *.so.*
-
-# python
 __pycache__
 
 # build related files
+build
 experiments/resources
 *.tar
 *.tar.gz

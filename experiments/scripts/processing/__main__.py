@@ -20,7 +20,7 @@ def main():
                 df = process_coruns(f)
 
                 power_share_plot(df)
-                plt.title(benchmark)
+                plt.suptitle(benchmark)
                 plt.savefig(
                     os.path.join(plots, benchmark + '-' + runs + '-power.pdf'),
                     bbox_inches = 'tight'
@@ -28,7 +28,7 @@ def main():
                 plt.close()
 
                 physical_power_plot(df)
-                plt.title(benchmark)
+                plt.suptitle(benchmark)
                 plt.savefig(
                     os.path.join(plots, benchmark + '-' + runs + '-energy.pdf'),
                     bbox_inches = 'tight'

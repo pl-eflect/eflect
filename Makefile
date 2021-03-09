@@ -10,6 +10,9 @@ SOURCES = $(subst .c,.o,$(wildcard src/jrapl/*.c))
 HEADERS = $(wildcard src/jrapl/*.h)
 
 BUILD_DIR = build
+
+.DEFAULT_GOAL = eflect
+
 %.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS) $(JNI_INCLUDE)
 
