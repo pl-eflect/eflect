@@ -33,7 +33,7 @@ public final class EflectSunflow implements BenchmarkTest {
   }
 
   public static void main(String[] args) {
-    int iterations = Integer.parseInt(System.getProperty("aeneas.iters", "1"));
+    int iterations = Integer.parseInt(System.getProperty("aeneas.iters", "10"));
     double SLA = Integer.parseInt(System.getProperty("aeneas.SLA", "0"));
 
     Map<String, Integer> properties = Map.of("aa.min", -1, "aa.max", 1);

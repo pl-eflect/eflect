@@ -3,7 +3,7 @@
 OUTPUT_DIR=$3
 
 SCRATCH_DIR=scratch
-DEPS_DIR="third_party"
+DEPS_DIR="resources/jar"
 
 EFLECT_JAR="eflect-experiments.jar:../eflect.jar"
 DACAPO_JAR="${DEPS_DIR}/dacapo.jar:${DEPS_DIR}/async-profiler/build/async-profiler.jar"

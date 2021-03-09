@@ -19,7 +19,8 @@ def footprint_to_power_summary(footprint):
 
     df = pd.concat([df, pd.DataFrame(data = {'start': timestamps})]).set_index(['start', 'domain'])
     df = df[['app_power', 'other_power', 'total_power']].clip(0).unstack().bfill().dropna(axis = 1, thresh = 5)
-    df = df.reindex(timestamps).rolling(250).mean().dropna()
+    # df = df.reindex(timestamps).rolling(25).mean().dropna()
+    df = df.reindex(timestamps).fillna(0)
     df.index.name = 'time'
     df = df.stack(0)
     df.columns = [int(domain) for domain in df.columns]

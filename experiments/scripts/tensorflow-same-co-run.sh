@@ -2,7 +2,7 @@
 
 OUTPUT_DIR=$1
 
-DEPS_DIR="third_party"
+DEPS_DIR="resources/jar"
 
 EFLECT_JAR="eflect-experiments.jar:../eflect.jar"
 TENSORFLOW_JAR=$DEPS_DIR/libtensorflow.jar

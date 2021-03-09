@@ -82,6 +82,7 @@ fi
 if [ ! -f $JAR_DIR/stokelib.jar ]; then
   make -C third_party/aeneas
   cp third_party/aeneas/stokelib.jar resources/jar/.
+  cp third_party/aeneas/libs/guava-20.0.jar resources/jar/.
   dirty=true
 fi
 
