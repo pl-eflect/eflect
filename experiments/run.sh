@@ -41,3 +41,6 @@ done
 for CORUNS in `seq 2 1 5`; do
   ./scripts/tensorflow-same-co-run.sh $CORUNS $OUTPUT_DIR/same/$CORUNS/tensorflow
 done
+
+./scripts/sunflow-same-co-run.sh "50 50" $OUTPUT_DIR/same/sunflow
+./scripts/sunflow-same-co-run.sh "30 70" $OUTPUT_DIR/mixed/sunflow

@@ -85,8 +85,8 @@ public final class Eflect {
     footprints = eflect.read();
   }
 
+  /** Returns the last data produced by {@code stop}. */
   public Collection<EnergyFootprint> read() {
-    footprints = eflect.read();
     return footprints;
   }
 

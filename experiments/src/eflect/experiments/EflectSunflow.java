@@ -8,7 +8,6 @@ import com.stoke.types.KnobValT;
 import eflect.Eflect;
 import eflect.stoke.EflectReward;
 import java.util.HashMap;
-import java.util.Map;
 import org.sunflow.SunflowAPI;
 import org.sunflow.core.Display;
 import org.sunflow.image.Color;
@@ -34,16 +33,22 @@ public final class EflectSunflow implements BenchmarkTest {
   }
 
   public static void main(String[] args) {
-    int iterations = Integer.parseInt(System.getProperty("aeneas.iters", "10"));
-    double SLA = Integer.parseInt(System.getProperty("aeneas.SLA", "0"));
+    double SLA = Integer.parseInt(args[0]);
 
-    Map<String, Integer> properties = new HashMap<>(Map.of("aa.min", -1, "aa.max", 1));
+    int iterations = 50;
+    HashMap<String, Integer> properties =
+        new HashMap<>() {
+          {
+            put("aa.min", -1);
+            put("aa.max", 1);
+          }
+        };
     AeneasMachine machine = new AeneasMachine(getPolicy(), getKnobs(), new EflectReward(SLA));
 
     Eflect.getInstance().start();
     machine.start();
     for (int i = 0; i < iterations; i++) {
-      new EflectSunflow(64, 40).kernelMain();
+      new EflectSunflow(64, Runtime.getRuntime().availableProcessors()).kernelMain();
       machine.interact();
       for (String property : properties.keySet()) {
         int value = KnobValT.needInteger(machine.read(property));
@@ -62,6 +67,7 @@ public final class EflectSunflow implements BenchmarkTest {
     this.threads = threads;
   }
 
+  @Override
   public void kernelMain() {
     new BenchmarkScene();
   }
@@ -199,7 +205,9 @@ public final class EflectSunflow implements BenchmarkTest {
     }
   }
 
+  @Override
   public void kernelBegin() {}
 
+  @Override
   public void kernelEnd() {}
 }
