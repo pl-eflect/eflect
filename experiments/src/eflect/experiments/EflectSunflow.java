@@ -21,17 +21,15 @@ public final class EflectSunflow implements BenchmarkTest {
   private int threads;
 
   private static StochasticPolicyType getPolicy() {
-    StochasticPolicyType policy =
-        StochasticPolicyType.toStochasticPolicy(
-            System.getProperty("aeneas.policy", "EPSILON_GREEDY_10"));
+    return StochasticPolicyType.toStochasticPolicy(
+        System.getProperty("aeneas.policy", "EPSILON_GREEDY_10"));
   }
 
   private static Knob[] getKnobs() {
-    Knob[] knobs =
-        new Knob[] {
-          new DiscreteKnob("aa.min", KnobValT.haveIntegers(-1, -2, -3)),
-          new DiscreteKnob("aa.max", KnobValT.haveIntegers(1, 2, 3))
-        };
+    return new Knob[] {
+      new DiscreteKnob("aa.min", KnobValT.haveIntegers(-1, -2, -3)),
+      new DiscreteKnob("aa.max", KnobValT.haveIntegers(1, 2, 3))
+    };
   }
 
   public static void main(String[] args) {
