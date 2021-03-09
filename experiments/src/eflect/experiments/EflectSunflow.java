@@ -7,6 +7,7 @@ import com.stoke.StochasticPolicyType;
 import com.stoke.types.KnobValT;
 import eflect.Eflect;
 import eflect.stoke.EflectReward;
+import java.util.HashMap;
 import java.util.Map;
 import org.sunflow.SunflowAPI;
 import org.sunflow.core.Display;
@@ -36,7 +37,7 @@ public final class EflectSunflow implements BenchmarkTest {
     int iterations = Integer.parseInt(System.getProperty("aeneas.iters", "10"));
     double SLA = Integer.parseInt(System.getProperty("aeneas.SLA", "0"));
 
-    Map<String, Integer> properties = Map.of("aa.min", -1, "aa.max", 1);
+    Map<String, Integer> properties = new HashMap<>(Map.of("aa.min", -1, "aa.max", 1));
     AeneasMachine machine = new AeneasMachine(getPolicy(), getKnobs(), new EflectReward(SLA));
 
     Eflect.getInstance().start();

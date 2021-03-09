@@ -87,6 +87,6 @@ if [ ! -f $JAR_DIR/stokelib.jar ]; then
 fi
 
 # build experiments
-if [ ! -f eflect-experiments.jar ] || [ ! -z $dirty ]; then
+if [ ! -f eflect-experiments.jar ] || [ ! $dirty=true ]; then
   make
 fi

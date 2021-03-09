@@ -34,4 +34,4 @@ eflect: clean libCPUScaler.so
 	rm -r $(BUILD_DIR)
 
 clean:
-	rm -rf $(BUILD_DIR) $(RAPL_TARGET) $(EFLECT_TARGET)
+	rm -rf $(BUILD_DIR) $(TARGET)
