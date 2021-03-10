@@ -18,12 +18,13 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 
 /** A collector that uses the eflect algorithm as a {@link Processor}. */
 final class EflectCollector extends SampleCollector<Collection<EnergyFootprint>> {
   // system constants
-  private static final int SOCKET_COUNT = Rapl.getInstance().getSocketCount();
+  private static final int DOMAIN_COUNT = Rapl.getInstance().getSocketCount();
   private static final int COMPONENT_COUNT = 3; // hard-coded value from rapl
   private static final double WRAP_AROUND_ENERGY = Rapl.getInstance().getWrapAroundEnergy();
   private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
@@ -36,16 +37,20 @@ final class EflectCollector extends SampleCollector<Collection<EnergyFootprint>>
     return List.of(stat, task, rapl);
   }
 
+  private static IntUnaryOperator getDomainConversion() {
+    return cpu -> cpu / (CPU_COUNT / DOMAIN_COUNT);
+  }
+
   public EflectCollector(int mergeAttempts, ScheduledExecutorService executor, Duration period) {
     super(
         getSources(),
         new AccountantMerger<EnergyFootprint>(
             () ->
                 new EnergyAccountant(
-                    SOCKET_COUNT,
+                    DOMAIN_COUNT,
                     COMPONENT_COUNT,
                     WRAP_AROUND_ENERGY,
-                    new JiffiesAccountant(SOCKET_COUNT, cpu -> cpu / (CPU_COUNT / SOCKET_COUNT))),
+                    new JiffiesAccountant(DOMAIN_COUNT, getDomainConversion())),
             mergeAttempts),
         executor,
         period);

@@ -37,7 +37,6 @@ public final class LoggerUtil {
   public static synchronized Logger getLogger() {
     if (!setup) {
       try {
-        // TODO(timurbey): add a file handler
         ConsoleHandler handler = new ConsoleHandler();
         handler.setFormatter(formatter);
 
