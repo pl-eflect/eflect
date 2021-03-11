@@ -19,3 +19,5 @@ done
 for pid in $pids; do
   tail --pid=$pid -f /dev/null
 done
+
+rm stoke.log

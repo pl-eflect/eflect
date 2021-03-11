@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
-/** A wrapper around {@link EflectCollector} that also monitors runtime stats and calmness. */
+/** A wrapper around {@link EflectCollector} that manages the machinery. */
 public final class Eflect {
   private static final Logger logger = getLogger();
   private static final AtomicInteger counter = new AtomicInteger();

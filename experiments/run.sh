@@ -1,6 +1,6 @@
 #!/bin/bash
 
-OUTPUT_DIR="eflect-logs"
+OUTPUT_DIR=$1
 
 ITERS=20
 
