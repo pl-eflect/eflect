@@ -14,4 +14,4 @@
 
 ## experiments
 
-Our experiments can be reproduced either using a Docker image or with the scripts provided in `./experiments`.
+Our experiments can be reproduced either using the scripts provided in `./experiments`.
