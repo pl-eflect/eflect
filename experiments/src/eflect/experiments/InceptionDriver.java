@@ -13,7 +13,7 @@ import org.tensorflow.Output;
 import org.tensorflow.Session;
 import org.tensorflow.Tensor;
 
-/** Runs a frozen tensorflow graph on image data. */
+/** Runs a frozen inception v3 graph on an input image. */
 public class InceptionDriver {
   private static void checkArgs(String[] args) {
     if (args.length < 1) {
@@ -57,7 +57,7 @@ public class InceptionDriver {
     }
   }
 
-  public static byte[] readBytesOrDie(Path path) {
+  private static byte[] readBytesOrDie(Path path) {
     try {
       return Files.readAllBytes(path);
     } catch (IOException e) {
@@ -67,7 +67,7 @@ public class InceptionDriver {
     return null;
   }
 
-  public static Tensor<Float> normalizeImage(byte[] imageBytes) {
+  private static Tensor<Float> normalizeImage(byte[] imageBytes) {
     try (Graph g = new Graph()) {
       GraphBuilder b = new GraphBuilder(g);
       // Some constants specific to the pre-trained model

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-/** Processor that merges samples into task energy footprints. */
+/** Accountant that merges samples into {@link EnergyFootprint}s. */
 public final class EnergyAccountant implements Accountant<Collection<EnergyFootprint>> {
   private final int domainCount;
   private final int componentCount;

@@ -16,6 +16,7 @@ import org.sunflow.math.Point3;
 import org.sunflow.math.Vector3;
 import org.sunflow.system.BenchmarkTest;
 
+/** Cornell Box rendering program that sets up aeneas and eflect to manage anti-aliasing. */
 public final class EflectSunflow implements BenchmarkTest {
   private int resolution;
   private int threads;
@@ -25,7 +26,7 @@ public final class EflectSunflow implements BenchmarkTest {
         System.getProperty("aeneas.policy", "EPSILON_GREEDY_10"));
   }
 
-  private static Knob[] getKnobs() {
+  private static Knob[] createKnobs() {
     return new Knob[] {
       new DiscreteKnob("aa.min", KnobValT.haveIntegers(-1, -2, -3)),
       new DiscreteKnob("aa.max", KnobValT.haveIntegers(1, 2, 3))
@@ -43,7 +44,7 @@ public final class EflectSunflow implements BenchmarkTest {
             put("aa.max", 1);
           }
         };
-    AeneasMachine machine = new AeneasMachine(getPolicy(), getKnobs(), new EflectReward(SLA));
+    AeneasMachine machine = new AeneasMachine(getPolicy(), createKnobs(), new EflectReward(SLA));
 
     Eflect.getInstance().start();
     machine.start();

@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 /** Utility to access data from /proc */
 public class ProcUtil {
-  // /proc/pid
+  // /proc/pid/task
   private static final long PID = ProcessHandle.current().pid();
   private static final Logger logger = LoggerUtil.getLogger();
 
@@ -35,6 +35,7 @@ public class ProcUtil {
   private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
   private static final String SYSTEM_STAT_FILE = String.join(File.separator, "/proc", "stat");
 
+  /** Reads the jiffies by cpu from /proc/stat. */
   public static String[] readProcStat() {
     String[] stats = new String[CPU_COUNT];
     try (BufferedReader reader = Files.newBufferedReader(Path.of(SYSTEM_STAT_FILE))) {

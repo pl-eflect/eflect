@@ -4,6 +4,7 @@ import eflect.ChappieEflect;
 import org.dacapo.harness.Callback;
 import org.dacapo.harness.CommandLineArgs;
 
+/** Callback that records eflect footprints. */
 public final class ChappieEflectCallback extends Callback {
   private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
 

@@ -63,6 +63,7 @@ public final class AccountantMerger<O> implements SampleProcessor<Collection<O>>
       if (accountant != null && accountant.account() != Accountant.Result.UNACCOUNTABLE) {
         results.addAll(accountant.process());
       } else if (accountant != null) {
+        // put the data at the beginning so it will be picked up next time
         data.put(Instant.EPOCH, accountant);
       }
     }

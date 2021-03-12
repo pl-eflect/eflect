@@ -10,10 +10,10 @@ public interface Accountant<O> extends SampleProcessor<O> {
     ACCOUNTED,
   }
 
-  /** Returns the quality of the result from {@link process()}. */
+  /** Returns information about the result that will returned from {@link process()}. */
   Result account();
 
-  /** Adds the data of this accountant with another. */
+  /** Adds the data from another accountant to this one. */
   <T extends Accountant<O>> void add(T other);
 
   /** Discards the data at the beginning of the interval. */

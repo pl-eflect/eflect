@@ -8,12 +8,8 @@ __pycache__
 
 # build related files
 build
+experiments/build
 experiments/resources
-*.tar
-*.tar.gz
-*.zip
-*.jpeg
-*.pb
 
 # data
 eflect-logs

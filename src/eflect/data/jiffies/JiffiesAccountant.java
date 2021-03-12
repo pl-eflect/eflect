@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.function.IntUnaryOperator;
 
-/** Processor that merges /proc samples into {@link ThreadActivity}s. */
+/** Accountant that merges /proc samples into {@link ThreadActivity}s. */
 public final class JiffiesAccountant implements Accountant<Collection<ThreadActivity>> {
   private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
 
@@ -196,7 +196,7 @@ public final class JiffiesAccountant implements Accountant<Collection<ThreadActi
       long[] jiffies, ArrayList<ProcThreadActivityBuilder> tasks) {
     ArrayList<ThreadActivity> activity = new ArrayList<>();
     for (ProcThreadActivityBuilder task : tasks) {
-      task.setTotalJiffies(jiffies[task.domain]);
+      task.setTotalJiffies(jiffies[task.getDomain()]);
       if (task.getActivity() > 0) {
         activity.add(task.build());
       }

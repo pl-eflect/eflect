@@ -5,6 +5,7 @@ import eflect.Eflect;
 import eflect.data.EnergyFootprint;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/** Reward that uses {@link Eflect} for valuation. */
 public final class EflectReward extends Reward {
   private final double SLA;
 

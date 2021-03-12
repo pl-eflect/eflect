@@ -6,6 +6,7 @@ import org.tensorflow.Output;
 import org.tensorflow.Tensor;
 import org.tensorflow.types.UInt8;
 
+/** Taken from {@link LabelImage}. */
 class GraphBuilder {
   private final Graph g;
 

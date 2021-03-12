@@ -23,7 +23,10 @@ import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Supplier;
 
-/** A collector that uses the eflect algorithm as a {@link Processor}. */
+/**
+ * A collector that uses the eflect algorithm and a stack trace aligner as a {@link
+ * SampleProcessor}.
+ */
 final class ChappieEflectCollector extends SampleCollector<Collection<EnergyFootprint>> {
   // system constants
   private static final int SOCKET_COUNT = Rapl.getInstance().getSocketCount();
@@ -40,8 +43,7 @@ final class ChappieEflectCollector extends SampleCollector<Collection<EnergyFoot
     return List.of(stat, task, rapl, async);
   }
 
-  public ChappieEflectCollector(
-      int mergeAttempts, ScheduledExecutorService executor, Duration period) {
+  ChappieEflectCollector(int mergeAttempts, ScheduledExecutorService executor, Duration period) {
     super(
         getSources(),
         new StackTraceAligner(

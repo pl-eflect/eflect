@@ -5,11 +5,11 @@ import eflect.data.ThreadActivity;
 /** Builder for {@link ThreadActivity} from /proc/ data. */
 // TODO: this is sketchy
 final class ProcThreadActivityBuilder {
-  long id;
-  String name;
-  int domain;
-  long taskJiffies;
-  long totalJiffies;
+  private long id;
+  private String name;
+  private int domain;
+  private long taskJiffies;
+  private long totalJiffies;
 
   ProcThreadActivityBuilder setId(long id) {
     this.id = id;
@@ -34,6 +34,10 @@ final class ProcThreadActivityBuilder {
   ProcThreadActivityBuilder setTotalJiffies(long totalJiffies) {
     this.totalJiffies = totalJiffies;
     return this;
+  }
+
+  int getDomain() {
+    return domain;
   }
 
   double getActivity() {

@@ -13,9 +13,4 @@ final class TaskStat {
     this.cpu = cpu;
     this.jiffies = jiffies;
   }
-
-  @Override
-  public String toString() {
-    return String.join(",", Long.toString(id), name, Integer.toString(cpu), Long.toString(jiffies));
-  }
 }

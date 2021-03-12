@@ -21,7 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.IntUnaryOperator;
 import java.util.function.Supplier;
 
-/** A collector that uses the eflect algorithm as a {@link Processor}. */
+/** A collector that uses the eflect algorithm as a {@link SampleProcessor}. */
 final class EflectCollector extends SampleCollector<Collection<EnergyFootprint>> {
   // system constants
   private static final int DOMAIN_COUNT = Rapl.getInstance().getSocketCount();
@@ -41,7 +41,7 @@ final class EflectCollector extends SampleCollector<Collection<EnergyFootprint>>
     return cpu -> cpu / (CPU_COUNT / DOMAIN_COUNT);
   }
 
-  public EflectCollector(int mergeAttempts, ScheduledExecutorService executor, Duration period) {
+  EflectCollector(int mergeAttempts, ScheduledExecutorService executor, Duration period) {
     super(
         getSources(),
         new AccountantMerger<EnergyFootprint>(
