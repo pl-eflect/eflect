@@ -7,32 +7,22 @@ import static java.util.concurrent.Executors.newScheduledThreadPool;
 import eflect.data.EnergyFootprint;
 import java.io.File;
 import java.time.Duration;
-import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
-/**
- * A wrapper around {@link ChappieEflectCollector} that also monitors runtime stats and calmness.
- */
+/** A singleton wrapper around {@link ChappieEflectCollector} that manages the machinery. */
 public final class ChappieEflect {
   private static final Logger logger = getLogger();
-  private static final AtomicInteger counter = new AtomicInteger();
-  private static final ThreadFactory threadFactory =
-      r -> {
-        Thread t = new Thread(r, "eflect-" + counter.getAndIncrement());
-        t.setDaemon(true);
-        return t;
-      };
-  private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
   private static final String FOOTPRINT_HEADER =
       "id,name,start,end,domain,app_energy,total_energy,trace";
 
   private static ChappieEflect instance;
 
-  /** Creates an instance of the underlying class if it hasn't been created yet. */
+  /** Creates an instance of the underlying class if it hasn't been created yet, then returns it. */
   public static synchronized ChappieEflect getInstance() {
     if (instance == null) {
       instance = new ChappieEflect();
@@ -40,15 +30,22 @@ public final class ChappieEflect {
     return instance;
   }
 
+  private final AtomicInteger counter = new AtomicInteger();
+  private final ThreadFactory threadFactory =
+      r -> {
+        Thread t = new Thread(r, "eflect-" + counter.getAndIncrement());
+        t.setDaemon(true);
+        return t;
+      };
+
   private final int mergeAttempts;
   private final String outputPath;
   private final long periodMillis;
-  private final Instant[] time = new Instant[2];
-  private final double[][][] energy = new double[2][][];
 
   private ScheduledExecutorService executor;
   private ChappieEflectCollector eflect;
   private Collection<EnergyFootprint> footprints;
+  private boolean isRunning;
 
   private ChappieEflect() {
     this.mergeAttempts = Integer.parseInt(System.getProperty("eflect.attempts", "100"));
@@ -57,42 +54,48 @@ public final class ChappieEflect {
   }
 
   /**
-   * Creates and starts instances of eflect and the calmness monitor.
+   * Creates and starts a new instance of {@link ChappieEflectCollector}.
    *
    * <p>If there is no existing executor, a new thread pool is spun-up.
-   *
-   * <p>If the period is 0, an eflect will not be created.
    */
-  public void start() {
-    start(periodMillis);
+  public void start(long periodMillis) {
+    if (executor == null) {
+      executor = newScheduledThreadPool(3, threadFactory);
+    }
+    logger.info("starting eflect");
+    footprints = new ArrayList<>();
+    eflect = new ChappieEflectCollector(mergeAttempts, executor, Duration.ofMillis(periodMillis));
+    eflect.start();
   }
 
-  /** Starts up eflect if needed. */
-  public void start(long periodMillis) {
-    logger.info("starting eflect");
-    if (executor == null) {
-      executor = newScheduledThreadPool(5, threadFactory);
-    }
-    Duration period = Duration.ofMillis(periodMillis);
-    eflect = new ChappieEflectCollector(mergeAttempts, executor, period);
-    eflect.start();
+  /** Starts eflect with an environment defined default period. */
+  public void start() {
+    start(periodMillis);
   }
 
   /** Stops any running collectors. */
   public void stop() {
     eflect.stop();
     logger.info("stopped eflect");
+    footprints = eflect.read();
+  }
+
+  /** Returns the last data produced by {@code stop}. */
+  public Collection<EnergyFootprint> read() {
+    return footprints;
   }
 
   /** Writes the footprints as a csv. */
+  public void dump(String outputDirName, String fileName) {
+    writeCsv(checkOutputDir(outputDirName), fileName, FOOTPRINT_HEADER, footprints);
+  }
+
   public void dump() {
-    File dataDirectory = getOutputDirectory();
-    writeCsv(dataDirectory.getPath(), "footprint.csv", FOOTPRINT_HEADER, eflect.read());
+    dump(outputPath, "footprint.csv");
   }
 
   public void dump(String tag) {
-    File dataDirectory = getOutputDirectory();
-    writeCsv(dataDirectory.getPath(), "footprint-" + tag + ".csv", FOOTPRINT_HEADER, eflect.read());
+    dump(outputPath, "footprint" + tag + ".csv");
   }
 
   /** Shutdown the executor. */
@@ -101,11 +104,11 @@ public final class ChappieEflect {
     executor = null;
   }
 
-  private File getOutputDirectory() {
+  private String checkOutputDir(String outputPath) {
     File outputDir = new File(outputPath);
     if (!outputDir.exists()) {
       outputDir.mkdirs();
     }
-    return outputDir;
+    return outputDir.getPath();
   }
 }
