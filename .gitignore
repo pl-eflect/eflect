@@ -1,0 +1,19 @@
+# compiled files
+*.o
+*.class
+*.jar
+*.so
+*.so.*
+__pycache__
+
+# build related files
+build
+experiments/build
+experiments/resources
+
+# data
+eflect-logs
+*.csv
+*.log
+*.pdf
+*.txt
