@@ -73,7 +73,7 @@ fetch_file $JANINO_JAR_URL $JAR_DIR/$JANINO_JAR
 
 # build local deps
 if [ ! -f $JAR_DIR/async-profiler.jar ]; then
-  make -C third_party/async-profiler
+  JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 make -C third_party/async-profiler
   cp third_party/async-profiler/build/async-profiler.jar resources/jar/.
   cp third_party/async-profiler/build/libasyncProfiler.so resources/bin/.
   dirty=true

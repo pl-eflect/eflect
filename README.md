@@ -7,7 +7,7 @@
 `eflect` requires the following tools to be built:
 
  - `make`
- - `java9`
+ - `java9+`
  - `jni`
 
 `make eflect` builds a fully deployable jar.

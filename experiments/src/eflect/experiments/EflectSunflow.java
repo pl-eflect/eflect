@@ -1,11 +1,19 @@
 package eflect.experiments;
 
+import static eflect.util.WriterUtil.writeCsv;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
 import com.stoke.AeneasMachine;
 import com.stoke.DiscreteKnob;
 import com.stoke.Knob;
 import com.stoke.StochasticPolicyType;
 import com.stoke.types.KnobValT;
 import eflect.Eflect;
+import eflect.data.EnergyFootprint;
 import eflect.stoke.EflectReward;
 import java.util.HashMap;
 import org.sunflow.SunflowAPI;
@@ -23,7 +31,7 @@ public final class EflectSunflow implements BenchmarkTest {
 
   private static StochasticPolicyType getPolicy() {
     return StochasticPolicyType.toStochasticPolicy(
-        System.getProperty("aeneas.policy", "EPSILON_GREEDY_10"));
+        System.getProperty("aeneas.policy", "VBDE_200"));
   }
 
   private static Knob[] createKnobs() {
@@ -33,10 +41,10 @@ public final class EflectSunflow implements BenchmarkTest {
     };
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     double SLA = Integer.parseInt(args[0]);
 
-    int iterations = 50;
+    int iterations = Integer.parseInt(args[1]);
     HashMap<String, Integer> properties =
         new HashMap<>() {
           {
@@ -44,12 +52,14 @@ public final class EflectSunflow implements BenchmarkTest {
             put("aa.max", 1);
           }
         };
-    AeneasMachine machine = new AeneasMachine(getPolicy(), createKnobs(), new EflectReward(SLA));
+    EflectReward reward = new EflectReward(SLA);
+    AeneasMachine machine = new AeneasMachine(getPolicy(), createKnobs(), reward);
 
     Eflect.getInstance().start();
     machine.start();
     for (int i = 0; i < iterations; i++) {
       new EflectSunflow(64, Runtime.getRuntime().availableProcessors()).kernelMain();
+      Thread.sleep(100);
       machine.interact();
       for (String property : properties.keySet()) {
         int value = KnobValT.needInteger(machine.read(property));
@@ -61,6 +71,12 @@ public final class EflectSunflow implements BenchmarkTest {
     }
     machine.stop();
     Eflect.getInstance().stop();
+
+    File outputDir = new File(System.getProperty("eflect.output", "."));
+    if (!outputDir.exists()) {
+      outputDir.mkdirs();
+    }
+    writeCsv(outputDir.getPath(), "footprint.csv", "id,name,start,end,domain,app_energy,total_energy,trace", reward.getData());
   }
 
   public EflectSunflow(int resolution, int threads) {
