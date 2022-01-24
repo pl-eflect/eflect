@@ -10,7 +10,7 @@ TENSORFLOW_JAR=$DEPS_DIR/libtensorflow.jar
 MODEL=$PWD/"resources/inception_v3_2016_08_28_frozen.pb"
 IMAGE=$PWD/"resources/test_image.jpeg"
 
-TENSORFLOW_SO=$PWD/$DEPS_DIR/libtensorflow_jni.so
+TENSORFLOW_SO=$PWD/resources/bin/libtensorflow_jni.so
 
 pids=""
 for i in `seq 1 1 $CORUNS`; do
