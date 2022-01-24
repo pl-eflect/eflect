@@ -1,6 +1,7 @@
 #!/bin/bash
 
 OUTPUT_DIR=$2
+ITERS=$3
 
 SCRATCH_DIR=scratch
 DEPS_DIR="resources/jar"
@@ -12,7 +13,7 @@ pids=""
 iter=0
 for i in $1; do
   let iter++
-  java -Deflect.output=$OUTPUT_DIR/$iter -cp $EFLECT_JAR:$SUNFLOW_JAR eflect.experiments.EflectSunflow $i &
+  java -Deflect.output=$OUTPUT_DIR/$iter -cp $EFLECT_JAR:$SUNFLOW_JAR eflect.experiments.EflectSunflow $i $ITERS &
   pids+=$!" "
 done
 

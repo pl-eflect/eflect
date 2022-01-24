@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# runs sunflow on default just to make sure we built and can run
 OUTPUT_DIR=$1
 DEPS_DIR="resources/jar"
 
