@@ -22,5 +22,5 @@ for CORUNS in `seq 2 1 5`; do
 done
 
 for CORUNS in `seq 2 1 5`; do
-  ./scripts/tensorflow-same-co-run.sh $CORUNS $OUTPUT_DIR/same/$CORUNS/tensorflow
+  ./scripts/tensorflow-same-co-run.sh $OUTPUT_DIR/same/$CORUNS/tensorflow $CORUNS
 done

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 OUTPUT_DIR=$1
+CORUNS=$2
 
 DEPS_DIR="resources/jar"
 
@@ -12,7 +13,7 @@ IMAGE=$PWD/"resources/test_image.jpeg"
 TENSORFLOW_SO=$PWD/$DEPS_DIR/libtensorflow_jni.so
 
 pids=""
-for i in `seq 1 1 $2`; do
+for i in `seq 1 1 $CORUNS`; do
   java -Dtf.lib=$TENSORFLOW_SO -Deflect.output=$OUTPUT_DIR/$i -cp $EFLECT_JAR:$TENSORFLOW_JAR eflect.experiments.InceptionDriver $MODEL $IMAGE &
   pids+=$!" "
 done
