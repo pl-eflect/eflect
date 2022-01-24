@@ -3,12 +3,10 @@
 OUTPUT_DIR=$1
 CORUNS=$2
 
-DEPS_DIR="resources/jar"
-
 EFLECT_JAR="eflect-experiments.jar:../eflect.jar"
-TENSORFLOW_JAR=$DEPS_DIR/libtensorflow.jar
-MODEL=$PWD/"resources/inception_v3_2016_08_28_frozen.pb"
-IMAGE=$PWD/"resources/test_image.jpeg"
+TENSORFLOW_JAR="resources/jar/libtensorflow.jar"
+MODEL=$PWD/"resources/data/inception_v3_2016_08_28_frozen.pb"
+IMAGE=$PWD/"resources/data/test_image.jpeg"
 
 TENSORFLOW_SO=$PWD/resources/bin/libtensorflow_jni.so
 
