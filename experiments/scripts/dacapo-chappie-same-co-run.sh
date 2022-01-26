@@ -7,13 +7,13 @@ SCRATCH_DIR=scratch
 DEPS_DIR="resources/jar"
 
 EFLECT_JAR="eflect-experiments.jar:../eflect.jar"
-DACAPO_JAR="${DEPS_DIR}/dacapo.jar:${DEPS_DIR}/async-profiler/build/async-profiler.jar"
+DACAPO_JAR="${DEPS_DIR}/dacapo.jar:${DEPS_DIR}/async-profiler.jar"
 
 mkdir $SCRATCH_DIR
 
 pids=""
 for i in `seq 1 1 $CORUNS`; do
-  java -Djava.library.path=$PWD/$DEPS_DIR/async-profiler/build -Deflect.output=$OUTPUT_DIR/$i -cp $EFLECT_JAR:$DACAPO_JAR Harness $1 -c eflect.experiments.ChappieEflectCallback --no-validation --scratch-directory=$SCRATCH_DIR/$i &
+  java -Djava.library.path="$PWD/resources/bin" -Deflect.output=$OUTPUT_DIR/$i -cp $EFLECT_JAR:$DACAPO_JAR Harness $1 -c eflect.experiments.ChappieEflectCallback --no-validation --scratch-directory=$SCRATCH_DIR/$i &
   pids+=$!" "
 done
 
