@@ -78,3 +78,66 @@ def physical_power_plot(energy):
         ax.spines['top'].set_visible(False)
 
     return fig
+
+def method_ranking(df):
+    df.index = df.index.str.replace('$', '\$')
+
+    ax = df.tail(10).plot.barh(
+        width = 0.33,
+        legend = False,
+        align = 'edge',
+        color = u'#2ca02c',
+        figsize = (16, 9)
+    )
+
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+
+    for rect, name in zip(ax.patches, df.tail(10).index):
+        height = rect.get_height()
+        ax.text(
+            df.max() * 0.005,
+            rect.get_y() + height + 0.05,
+            name,
+            ha='left', va='bottom', fontsize = 24
+        )
+
+    plt.xlim(0, (int(5 * df.max()) + 1) / 5)
+
+    plt.xlabel('Normalized Energy Consumption', fontsize = 28)
+    plt.ylabel(df.index.name.title(), fontsize = 28)
+
+    plt.yticks([])
+    plt.xticks(fontsize = 32)
+
+    return ax.get_figure()
+
+def aeneas_plot(df, sla):
+    # removing an data points before we actually started collecting
+    first = df[df > 0].index.min()
+    df = df[df.index >= first]
+
+    df.index = df.index.astype(np.int64)
+    df.index = (df.index - df.index.min()) / 1000000000
+    ax = df.plot.line(
+        color = ['tab:green'],
+    )
+
+    ax = df.expanding().mean().plot.line(
+        color = ['tab:red'],
+    )
+
+    print(sla)
+    ax.axhline(sla, color='k', linestyle='--')
+
+    ax.set_xlabel('Elapsed Time (s)', fontsize = 16)
+    ax.set_xticklabels(labels = list(map(int, ax.get_xticks())), fontsize = 20, rotation = 30)
+
+    ax.set_ylabel('Energy (J)', fontsize = 16)
+    ax.set_yticks(range(0, int(df.max()) + 20, 20))
+    ax.set_yticklabels(labels = range(0, int(df.max()) + 20, 20), fontsize = 20)
+
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+
+    return ax

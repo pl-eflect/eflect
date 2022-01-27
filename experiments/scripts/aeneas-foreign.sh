@@ -18,7 +18,7 @@ pids+=$!" "
 sleep 1m
 
 pids=""
-java -Deflect.output=$OUTPUT_DIR -cp $EFLECT_JAR:$SUNFLOW_JAR eflect.experiments.EflectSunflow $SLA $ITERS &
+java -Deflect.output=$OUTPUT_DIR/1 -cp $EFLECT_JAR:$SUNFLOW_JAR eflect.experiments.EflectSunflow $SLA $ITERS &
 pids+=$!" "
 
 for pid in $pids; do
