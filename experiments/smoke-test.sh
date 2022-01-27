@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # runs sunflow on default just to make sure we built and can run
-OUTPUT_DIR=$1
+OUTPUT_DIR=/tmp/smoke-test
+mkdir $OUTPUT_DIR
 DEPS_DIR="resources/jar"
 
 EFLECT_JAR="eflect-experiments.jar:../eflect.jar"
