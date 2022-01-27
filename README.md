@@ -15,13 +15,13 @@ docker run --privileged --cap-add=ALL -it -v /dev:/dev -v /lib/modules:/lib/modu
 or build and run the provided `Dockerfile`:
 
 ```bash
-docker build -t eflect-icse20 .
+docker build -t eflect-icse22 .
 docker run --privileged --cap-add=ALL -it -v /dev:/dev -v /lib/modules:/lib/modules pleflect/eflect-icse22:1.0
 ```
 
 This repository's code will already be fully built and the experiments can be run using `experiments/run-experiments.sh`, which will output to `experiments/data`.
 
-**NOTE**: The data reported in the paper was produced through an evaluation with the system described below. As energy consumption varies from system to system, e.g., the number of cores, the OS schedulers, the JVM runtime behavior, etc., a reproduction on a different system may not produce identical results as we reported in the paper. Specifically, `eflect` requires the use of [RAPL](https://en.wikipedia.org/wiki/Perf_(Linux)#RAPL), which only works on Intel cpus:
+**NOTE**: The data reported in the paper was produced through an evaluation with the system described below. As energy consumption varies from system to system, e.g., the number of cores, the OS schedulers, the JVM runtime behavior, etc., a reproduction on a different system may not produce identical results as we reported in the paper. Specifically, `eflect` requires the use of [RAPL](https://en.wikipedia.org/wiki/Perf_(Linux)#RAPL), which only works on Intel cpus. If you encounter a `pread error` while running, you may need to run `modprobe msr`.
 
   > - Dual socket Intel E5-2630 v4 2.20 GHz (20 cores)
   > - Hyper threading enabled

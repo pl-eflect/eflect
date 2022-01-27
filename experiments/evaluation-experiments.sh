@@ -15,7 +15,7 @@ for CORUNS in `seq 2 1 5`; do
 done
 
 SIZE=large
-BENCHMARKS=(avrora batik eclipse graphchi h2 pmd sunflow)
+BENCHMARKS=(avrora batik eclipse h2 pmd sunflow)
 
 for CORUNS in `seq 2 1 5`; do
   for BENCHMARK in ${BENCHMARKS[@]}; do
@@ -93,24 +93,24 @@ ITERS=$2
 
 BENCHMARK=xalan
 SIZE=small
-java -Deflect.output=$OUTPUT_DIR/mixed/sunflow-h2-xalan-graphchi/$BENCHMARK -cp $EFLECT_JAR:$DACAPO_JAR Harness $BENCHMARK -s $SIZE -n $ITERS \
+java -Deflect.output=$OUTPUT_DIR/mixed/sunflow-h2-xalan-pmd/$BENCHMARK -cp $EFLECT_JAR:$DACAPO_JAR Harness $BENCHMARK -s $SIZE -n $ITERS \
   -c eflect.experiments.EflectCallback --no-validation --scratch-directory=$SCRATCH_DIR/$BENCHMARK &
 pids+=$!" "
 
 SIZE=large
 
 BENCHMARK=sunflow
-java -Deflect.output=$OUTPUT_DIR/mixed/sunflow-h2-xalan-graphchi/$BENCHMARK -cp $EFLECT_JAR:$DACAPO_JAR Harness $BENCHMARK -s $SIZE -n $ITERS \
+java -Deflect.output=$OUTPUT_DIR/mixed/sunflow-h2-xalan-pmd/$BENCHMARK -cp $EFLECT_JAR:$DACAPO_JAR Harness $BENCHMARK -s $SIZE -n $ITERS \
   -c eflect.experiments.EflectCallback --no-validation --scratch-directory=$SCRATCH_DIR/$BENCHMARK &
 pids+=$!" "
 
 BENCHMARK=h2
-java -Deflect.output=$OUTPUT_DIR/mixed/sunflow-h2-xalan-graphchi/$BENCHMARK -cp $EFLECT_JAR:$DACAPO_JAR Harness $BENCHMARK -s $SIZE -n $ITERS \
+java -Deflect.output=$OUTPUT_DIR/mixed/sunflow-h2-xalan-pmd/$BENCHMARK -cp $EFLECT_JAR:$DACAPO_JAR Harness $BENCHMARK -s $SIZE -n $ITERS \
   -c eflect.experiments.EflectCallback --no-validation --scratch-directory=$SCRATCH_DIR/$BENCHMARK &
 pids+=$!" "
 
-BENCHMARK=graphchi
-java -Deflect.output=$OUTPUT_DIR/mixed/sunflow-h2-xalan-graphchi/$BENCHMARK -cp $EFLECT_JAR:$DACAPO_JAR Harness $BENCHMARK -s $SIZE -n $ITERS \
+BENCHMARK=pmd
+java -Deflect.output=$OUTPUT_DIR/mixed/sunflow-h2-xalan-pmd/$BENCHMARK -cp $EFLECT_JAR:$DACAPO_JAR Harness $BENCHMARK -s $SIZE -n $ITERS \
   -c eflect.experiments.EflectCallback --no-validation --scratch-directory=$SCRATCH_DIR/$BENCHMARK &
 pids+=$!" "
 

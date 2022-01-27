@@ -13,7 +13,7 @@ for BENCHMARK in ${BENCHMARKS[@]}; do
 done
 
 SIZE=large
-BENCHMARKS=(avrora batik eclipse graphchi h2 pmd sunflow)
+BENCHMARKS=(avrora batik eclipse h2 pmd sunflow)
 
 for BENCHMARK in ${BENCHMARKS[@]}; do
   ./scripts/dacapo-chappie-same-co-run.sh "$BENCHMARK -s $SIZE -n $ITERS" $CORUNS $OUTPUT_DIR/$BENCHMARK

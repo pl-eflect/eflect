@@ -21,7 +21,7 @@ def power_share_plot(energy):
 
         ax.axhline(100, color = 'k', linestyle = '--')
 
-        ax.set_title(f'Socket {socket + 1}', fontsize = 20)
+        ax.set_title('Socket {}'.format(socket + 1), fontsize = 20)
 
         ax.set_xlabel('Elapsed Time (s)', fontsize = 16)
         ax.set_xticklabels(labels = list(map(int, ax.get_xticks())), fontsize = 20, rotation = 30)
@@ -65,7 +65,7 @@ def physical_power_plot(energy):
             ax = ax
         )
 
-        ax.set_title(f'Socket {socket + 1}', fontsize = 20)
+        ax.set_title('Socket {}'.format(socket + 1), fontsize = 20)
 
         ax.set_xlabel('Elapsed Time (s)', fontsize = 16)
         ax.set_xticklabels(labels = list(map(int, ax.get_xticks())), fontsize = 20, rotation = 30)
