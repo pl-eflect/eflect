@@ -9,14 +9,14 @@
 Our publication data can be reproduced using a docker image. You can either run the image from docker hub:
 
 ```bash
-docker run --privileged --cap-add=ALL -it -v /dev:/dev -v /lib/modules:/lib/modules pleflect/eflect-icse22:1.0
+docker run --privileged --cap-add=ALL -it -v /dev:/dev -v /lib/modules:/lib/modules pleflect/eflect:latest
 ```
 
 or build and run the provided `Dockerfile`:
 
 ```bash
 docker build -t eflect-icse22 .
-docker run --privileged --cap-add=ALL -it -v /dev:/dev -v /lib/modules:/lib/modules pleflect/eflect-icse22:1.0
+docker run --privileged --cap-add=ALL -it -v /dev:/dev -v /lib/modules:/lib/modules pleflect/eflect:latest
 ```
 
 This repository's code will already be fully built and the experiments can be run using `eflect/experiments/run-experiments.sh`, which will output to `eflect/experiments/data`:
