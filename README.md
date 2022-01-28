@@ -19,7 +19,11 @@ docker build -t eflect-icse22 .
 docker run --privileged --cap-add=ALL -it -v /dev:/dev -v /lib/modules:/lib/modules pleflect/eflect-icse22:1.0
 ```
 
-This repository's code will already be fully built and the experiments can be run using `experiments/run-experiments.sh`, which will output to `experiments/data`.
+This repository's code will already be fully built and the experiments can be run using `eflect/experiments/run-experiments.sh`, which will output to `eflect/experiments/data`:
+
+```bash
+cd eflect/experiments && run-experiments.sh
+```
 
 **NOTE**: The data reported in the paper was produced through an evaluation with the system described below. As energy consumption varies from system to system, e.g., the number of cores, the OS schedulers, the JVM runtime behavior, etc., a reproduction on a different system may not produce identical results as we reported in the paper. Specifically, `eflect` requires the use of [RAPL](https://en.wikipedia.org/wiki/Perf_(Linux)#RAPL), which only works on Intel cpus. If you encounter a `pread error` while running, you may need to run `modprobe msr`.
 
@@ -39,12 +43,12 @@ If you prefer to build `eflect` from source, please follow the instructions belo
 `eflect` requires the following to build and run:
 
 ```bash
-apt-get install -y git openjdk-11-jdk libjna-jni git make wget kmod python3 python3-pip
+apt-get install -y git openjdk-11-jdk openjdk-11-dbg libjna-jni git make wget kmod python3 python3-pip
 pip3 install numpy pandas matplotlib
 ```
 
-A deployable `eflect` jar can be built from the top-level with `make eflect`. To run the experiments, you will need to first run `experiments/setup.sh` which will download the experiment dependencies and build the experiment driving code.
+A deployable `eflect` jar can be built from the top-level with `make eflect`. To run the experiments, you will need to first run `eflect/experiments/setup.sh` which will download the experiment dependencies and build the driving code.
 
 ## Execution ##
 
-Once `eflect` and its driver are built, the entire experiment can be run using `experiments/run-experiments.sh` in the same way as the docker image.
+Once `eflect` and its driver are built, the entire experiment can be run using `eflect/experiments/run-experiments.sh` in the same way as the docker image.
